@@ -20,6 +20,7 @@ REQUIREMENTS = ['requests>=2,<3']
 
 _LOGGER = logging.getLogger(__name__)
 
+
 def get_scanner(hass, config):
     scanner = SwisscomDeviceScanner(config[DOMAIN])
 
@@ -82,7 +83,14 @@ class SwisscomDeviceScanner(object):
             r = requests.post('http://' + self.host + '/ws', headers={
                 'Authorization': 'X-Sah-Login',
                 'Content-Type': 'application/x-sah-ws-4-call+json'
-            }, data='{"service":"sah.Device.Information","method":"createContext","parameters":{"applicationName":"webui","username":"'+self.username+'","password":"'+self.password+'"}}')
+            }, data="""{"service":"sah.Device.Information",
+                        "method":"createContext",
+                        "parameters": {
+                          "applicationName":"webui",
+                          "username":""""+self.username+""""
+                          ,"password":""""+self.password+""""
+                        }
+                       }""")
             return r.json()['data']['contextID']
         except:
             return
@@ -92,7 +100,9 @@ class SwisscomDeviceScanner(object):
         r = requests.post('http://' + self.host + '/ws', headers={
             'Authorization': 'X-Sah ' + self._get_access_token(),
             'Content-Type': 'application/x-sah-ws-4-call+json'
-        }, data='{"service":"Devices","method":"get","parameters":{"expression":"lan and not self"}}')
+        }, data="""{"service":"Devices",
+                    "method":"get",
+                    "parameters":{"expression":"lan and not self"}}""")
 
         devices = {}
         for device in r.json()['status']:
