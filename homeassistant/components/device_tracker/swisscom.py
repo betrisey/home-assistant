@@ -20,7 +20,6 @@ REQUIREMENTS = ['requests>=2,<3']
 
 _LOGGER = logging.getLogger(__name__)
 
-# pylint: disable=unused-argument
 def get_scanner(hass, config):
     scanner = SwisscomDeviceScanner(config[DOMAIN])
 
@@ -28,7 +27,7 @@ def get_scanner(hass, config):
 
 
 class SwisscomDeviceScanner(object):
-    """This class queries a router running Swisscom Internet Box firmware."""
+    """This class queries a router running Swisscom Internet-Box firmware."""
 
     def __init__(self, config):
         """Initialize the scanner."""
@@ -78,7 +77,7 @@ class SwisscomDeviceScanner(object):
             self.last_results = active_clients
             return True
 
-    def get_access_token(self):
+    def _get_access_token(self):
         try:
             r = requests.post('http://' + self.host + '/ws', headers={
                 'Authorization': 'X-Sah-Login',
@@ -91,7 +90,7 @@ class SwisscomDeviceScanner(object):
     def get_swisscom_data(self):
         """Retrieve data from Swisscom and return parsed result."""
         r = requests.post('http://' + self.host + '/ws', headers={
-            'Authorization': 'X-Sah ' + self.get_access_token(),
+            'Authorization': 'X-Sah ' + self._get_access_token(),
             'Content-Type': 'application/x-sah-ws-4-call+json'
         }, data='{"service":"Devices","method":"get","parameters":{"expression":"lan and not self"}}')
 
@@ -108,4 +107,3 @@ class SwisscomDeviceScanner(object):
                 pass
         devices.pop('', None)
         return devices
-
