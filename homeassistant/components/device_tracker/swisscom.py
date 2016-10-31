@@ -90,7 +90,7 @@ class SwisscomDeviceScanner(object):
                           "username":""""+self.username+""""
                           ,"password":""""+self.password+""""
                         }
-                       }""")
+                       }""", timeout=2)
             return r.json()['data']['contextID']
         except:
             return
@@ -102,7 +102,8 @@ class SwisscomDeviceScanner(object):
             'Content-Type': 'application/x-sah-ws-4-call+json'
         }, data="""{"service":"Devices",
                     "method":"get",
-                    "parameters":{"expression":"lan and not self"}}""")
+                    "parameters":{"expression":"lan and not self"}}""",
+        timeout=10)
 
         devices = {}
         for device in r.json()['status']:
